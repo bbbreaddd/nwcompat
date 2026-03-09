@@ -14,3 +14,15 @@ nwcompat.patches.push({
         };
     },
 });
+nwcompat.patches.push({
+    stage: "presetup",
+    target: "instarsandtime",
+    name: "misc",
+    patch: () => {
+        // Fix YEP_CoreEngine enforcing screen ratios on mobile.
+        const coreEngine = $plugins.find((p) => p.name === "YEP_CoreEngine");
+        if (coreEngine && coreEngine.parameters) {
+            coreEngine.parameters["Update Real Scale"] = "false";
+        }
+    },
+});
