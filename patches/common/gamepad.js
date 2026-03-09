@@ -16,6 +16,10 @@ nwcompat.patches.push({
         const initialButtonSize = nwcompat.savedData.gamepad.buttonSize || 56;
         gamepadRoot.style.setProperty("--nwcompat-gamepad-button-size", `${initialButtonSize}px`);
 
+        if (!nwcompat.savedData.gamepad.visible) {
+            gamepadRoot.classList.add("hidden");
+        }
+
         const gamepadEditor = document.createElement("div");
         gamepadEditor.className = "editor";
         gamepadRoot.appendChild(gamepadEditor);
@@ -29,7 +33,9 @@ nwcompat.patches.push({
             </svg>
         `;
         toggleBtn.addEventListener("click", () => {
-            gamepadRoot.classList.toggle("hidden");
+            const isHidden = gamepadRoot.classList.toggle("hidden");
+            nwcompat.savedData.gamepad.visible = !isHidden;
+            nwcompat.saveData();
         });
         gamepadRoot.appendChild(toggleBtn);
 

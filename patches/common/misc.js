@@ -217,8 +217,13 @@ nwcompat.patches.push({
                 this.switchMode();
             });
 
-            this._mode = -1;
-            this.hide();
+            this._mode = nwcompat.savedData.fps.mode || 0;
+            if (nwcompat.savedData.fps.visible) {
+                this.show();
+            } else {
+                this._visible = false;
+                this._stats.setMode(-1);
+            }
 
             document.body.appendChild(this._stats.dom);
         };
@@ -237,6 +242,10 @@ nwcompat.patches.push({
             else this._mode++;
 
             this._stats.setMode(this._mode);
+
+            nwcompat.savedData.fps.mode = this._mode;
+            nwcompat.savedData.fps.visible = true;
+            nwcompat.saveData();
         };
 
         Omori_FPSCounter.prototype.toggle = function () {
@@ -247,11 +256,17 @@ nwcompat.patches.push({
             this._visible = true;
             if (this._mode == -1) this._mode = 0;
             this._stats.setMode(this._mode);
+
+            nwcompat.savedData.fps.visible = true;
+            nwcompat.saveData();
         };
 
         Omori_FPSCounter.prototype.hide = function () {
             this._visible = false;
             this._stats.setMode(-1);
+
+            nwcompat.savedData.fps.visible = false;
+            nwcompat.saveData();
         };
 
         if (!Graphics._fpsMeter) {

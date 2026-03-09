@@ -64,6 +64,8 @@ nwcompat.loadData = function () {
     nwcompat.savedData.achievements = file.achievements || {};
     nwcompat.savedData.gamepad = file.gamepad || {};
     nwcompat.savedData.gamepad.buttons ||= {};
+    nwcompat.savedData.gamepad.visible = file.gamepad?.visible ?? true;
+    nwcompat.savedData.fps = file.fps || { visible: false, mode: 0 };
 };
 
 nwcompat.saveData = function () {
