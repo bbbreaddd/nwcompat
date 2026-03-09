@@ -97,6 +97,60 @@
 .nwcompat-gamepad .pad-wrap {
     position: absolute;
     pointer-events: auto;
+    transition: opacity 0.3s ease;
+}
+
+.nwcompat-gamepad.hidden .pad-wrap {
+    opacity: 0;
+    pointer-events: none;
+}
+
+.nwcompat-gamepad-toggle {
+    position: absolute;
+    bottom: 16px;
+    right: 16px;
+    z-index: 100001;
+    pointer-events: auto;
+    background: rgba(0, 0, 0, 0.4);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    color: rgba(255, 255, 255, 0.7);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 50%;
+    width: 44px;
+    height: 44px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.nwcompat-gamepad-toggle:active {
+    transform: scale(0.9);
+    background: rgba(255, 255, 255, 0.2);
+    color: white;
+}
+
+.nwcompat-gamepad-toggle svg {
+    width: 24px;
+    height: 24px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+.nwcompat-gamepad.hidden .nwcompat-gamepad-toggle {
+    opacity: 0.4;
+    background: rgba(0, 0, 0, 0.2);
+}
+
+.nwcompat-gamepad.hidden .nwcompat-gamepad-toggle:active {
+    opacity: 1;
 }
 
 .nwcompat-gamepad .pad {

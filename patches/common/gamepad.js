@@ -20,6 +20,19 @@ nwcompat.patches.push({
         gamepadEditor.className = "editor";
         gamepadRoot.appendChild(gamepadEditor);
 
+        const toggleBtn = document.createElement("button");
+        toggleBtn.className = "nwcompat-gamepad-toggle";
+        toggleBtn.innerHTML = `
+            <svg viewBox="0 0 24 24">
+                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                <circle cx="12" cy="12" r="3"></circle>
+            </svg>
+        `;
+        toggleBtn.addEventListener("click", () => {
+            gamepadRoot.classList.toggle("hidden");
+        });
+        gamepadRoot.appendChild(toggleBtn);
+
         const sizeSlider = document.createElement("input");
         sizeSlider.type = "range";
         sizeSlider.min = "32";
