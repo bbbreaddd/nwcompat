@@ -43,6 +43,7 @@ class VirtualGamepad {
         this.axes = [0, 0];
         this.mapping = "standard";
         this.connected = true;
+        this.interacted = false;
         this.buttons = [
             { pressed: false }, // 0: A
             { pressed: false }, // 1: B
@@ -227,6 +228,8 @@ class Pad {
     _onPointerDown(e) {
         if (Draggable.inEditMode) return;
 
+        VirtualGamepad.instance.interacted = true;
+
         const button = this.#getButtonAt(e.clientX, e.clientY);
         if (!button) return;
         this.#press(button, e.pointerId);
@@ -317,6 +320,8 @@ class Button {
 
     _onPointerDown(e) {
         if (Draggable.inEditMode) return;
+
+        VirtualGamepad.instance.interacted = true;
 
         this.#press(e.pointerId);
     }

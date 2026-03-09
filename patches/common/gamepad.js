@@ -9,7 +9,7 @@ nwcompat.patches.push({
         new VirtualGamepad(0, targetLayout.id);
 
         navigator.getGamepads = function () {
-            return [VirtualGamepad.instance];
+            return VirtualGamepad.instance.interacted ? [VirtualGamepad.instance] : [];
         };
 
         const gamepadRoot = document.querySelector(".nwcompat-gamepad");
