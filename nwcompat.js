@@ -66,6 +66,8 @@ nwcompat.loadData = function () {
     nwcompat.savedData.gamepad.buttons ||= {};
     nwcompat.savedData.gamepad.visible = file.gamepad?.visible ?? true;
     nwcompat.savedData.fps = file.fps || { visible: false, mode: 0 };
+
+    this.preCacheAchievements();
 };
 
 nwcompat.saveData = function () {
@@ -80,6 +82,74 @@ nwcompat.saveData = function () {
     });
 };
 
+nwcompat.getAchievementIcon = async function (url) {
+    if (!url || !url.startsWith("http")) return url;
+
+    const fs = require("fs");
+    const pp = require("path");
+    const iconsPath = pp.join(nwcompat.nativeInfo.dataDirectory, "icons");
+
+    try {
+        if (!fs.existsSync(iconsPath)) fs.mkdirSync(iconsPath);
+
+        const filename = `${nwcompat.game}_${url.split("/").pop()}`;
+        const localPath = pp.join(iconsPath, filename);
+
+        if (fs.existsSync(localPath)) {
+            const data = fs.readFileSync(localPath);
+            return `data:image/png;base64,${data.toString("base64")}`;
+        }
+
+        const response = await fetch(url);
+        const blob = await response.blob();
+        return new Promise((resolve) => {
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                const base64data = reader.result;
+                const base64Content = base64data.split(",")[1];
+                // Save directly using the fs implementation with base64 encoding hint
+                fs.writeFileSync(localPath, base64Content, "base64");
+                resolve(base64data);
+            };
+            reader.readAsDataURL(blob);
+        });
+    } catch (e) {
+        console.warn(`[nwcompat] Failed to cache icon: ${url}`, e);
+        return url;
+    }
+};
+
+nwcompat.preCacheAchievements = function () {
+    try {
+        const fs = require("fs");
+        const pp = require("path");
+        const iconsPath = pp.join(nwcompat.nativeInfo.dataDirectory, "icons");
+
+        const achievementsModule = require("./node/achievements.js");
+        const achievementsData = achievementsModule[nwcompat.game];
+
+        if (achievementsData) {
+            if (!fs.existsSync(iconsPath)) fs.mkdirSync(iconsPath);
+
+            for (const id in achievementsData) {
+                const url = achievementsData[id].img;
+                if (!url || !url.startsWith("http")) continue;
+
+                const filename = `${nwcompat.game}_${url.split("/").pop()}`;
+                const localPath = pp.join(iconsPath, filename);
+
+                // Only trigger getAchievementIcon if the file doesn't exist
+                // This avoids loading the file into memory on every startup
+                if (!fs.existsSync(localPath)) {
+                    this.getAchievementIcon(url);
+                }
+            }
+        }
+    } catch (e) {
+        console.warn("[nwcompat] Failed to load achievements for pre-caching", e);
+    }
+};
+
 nwcompat.createAchievementElement = function (name, description, icon, id) {
     const elRoot = document.createElement("div");
     elRoot.className = "nwcompat-achievement";
@@ -88,6 +158,9 @@ nwcompat.createAchievementElement = function (name, description, icon, id) {
     const elIcon = document.createElement("div");
     elIcon.className = "nwcompat-achievement-icon";
     elIcon.style.backgroundImage = `url(${icon})`;
+    nwcompat.getAchievementIcon(icon).then((localUrl) => {
+        elIcon.style.backgroundImage = `url(${localUrl})`;
+    });
     elRoot.appendChild(elIcon);
 
     const elText = document.createElement("div");

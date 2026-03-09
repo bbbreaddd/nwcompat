@@ -42,11 +42,24 @@ const fs = {
         }
     },
 
-    writeFileSync(path, data) {
+    writeFileSync(path, data, options) {
         if (typeof data === "number") data = String(data);
-        if (typeof data === "string") data = encoder.encode(data);
 
-        nwcompat.fsWriteFile(path, Buffer.from(data).toString("base64"));
+        let buffer;
+        const encoding = typeof options === "string" ? options : options?.encoding;
+
+        if (typeof data === "string") {
+            if (encoding === "base64") {
+                buffer = Buffer.from(data, "base64");
+            } else {
+                buffer = Buffer.from(encoder.encode(data));
+            }
+        } else {
+            // It's a Buffer, Uint8Array, etc.
+            buffer = Buffer.from(data);
+        }
+
+        nwcompat.fsWriteFile(path, buffer.toString("base64"));
     },
 
     readdir(path, callback) {
