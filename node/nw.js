@@ -12,18 +12,20 @@ class NwWindow extends EventTarget {
         return window.screenY;
     }
 
-    enterFullscreen() {}
-    leaveFullscreen() {}
+    enterFullscreen() { }
+    leaveFullscreen() { }
 
-    showDevTools() {}
-    closeDevTools() {}
+    showDevTools() { }
+    closeDevTools() { }
     isDevToolsOpen() {
         return false;
     }
 
-    moveTo() {}
-    focus() {}
-    close() {}
+    moveTo() { }
+    focus() { }
+    close() {
+        window.close();
+    }
 
     on(eventName, callback) {
         this.addEventListener(eventName, callback);
@@ -35,20 +37,21 @@ const nwWindow = new NwWindow();
 module.exports = {
     App: {
         argv: [`--${nwcompat.nativeInfo.key}`],
+        quit: () => window.close(),
     },
     Screen: {
-        Init: () => {},
-        on: () => {},
+        Init: () => { },
+        on: () => { },
     },
     Window: {
         get: () => nwWindow,
     },
     Shell: {
-        openExternal: (url) => {},
+        openExternal: (url) => { },
     },
     Menu: class {
         constructor() {
-            this.createMacBuiltin = () => {};
+            this.createMacBuiltin = () => { };
         }
     },
 };
