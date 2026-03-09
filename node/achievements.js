@@ -5,6 +5,11 @@ module.exports = {
             description: "Wake up in the morning.",
             img: "https://cdn.cloudflare.steamstatic.com/steamcommunity/public/images/apps/1150690/4e50f8a9ce8a4f412042165032dfdd54a4f931f2.jpg",
         },
+        TEST_ACHIEVEMENT: {
+            name: "Long Description Test",
+            description: "This is a test achievement.",
+            img: "https://steamdb.info/static/img/appicon.svg",
+        },
         OYASUMI: {
             name: "Oyasumi.",
             description: "Go to sleep after a long day.",
@@ -426,6 +431,11 @@ module.exports = {
             name: "Welcome to the show!",
             description: "Finish getting ready.",
             img: "https://cdn.cloudflare.steamstatic.com/steamcommunity/public/images/apps/1677310/12d402195bffd6e5c98a7d95865544734889261a.jpg",
+        },
+        TEST_ACHIEVEMENT: {
+            name: "Long Description Test",
+            description: "This is a really, really, really, really, really, really, really, really, really, really, really, really, really, really, really, really, really, really, really, really, really, really, really, really, really, really, really, really, really, really, really, really, really, really, really, really, really, really, really, really, really, really, really, really, really, really, really, really, really, really, really, really, really, really, really, really, really, really, really, really, really, really long description to see if it overflows the achievement UI container.",
+            img: "https://steamdb.info/static/img/appicon.svg",
         },
         act2: {
             name: "Break a leg!",

@@ -80,7 +80,7 @@ nwcompat.saveData = function () {
 
 nwcompat.createAchievementElement = function (name, description, icon, id) {
     const elRoot = document.createElement("div");
-    elRoot.className = "nwcomapt-achievement";
+    elRoot.className = "nwcompat-achievement";
     elRoot.id = id;
 
     const elIcon = document.createElement("div");
@@ -146,3 +146,49 @@ globalThis.process = {
     platform: "win32",
     browser: true,
 };
+
+// Add test achievement button
+if (nwcompat.nativeInfo.isDebug) {
+    window.addEventListener("load", () => {
+        const btn = document.createElement("button");
+        btn.textContent = "Unlock Test Achievement";
+        btn.style.position = "absolute";
+        btn.style.top = "10px";
+        btn.style.right = "10px";
+        btn.style.zIndex = "999999";
+        btn.style.padding = "10px";
+        btn.style.backgroundColor = "rgba(0,0,0,0.7)";
+        btn.style.color = "white";
+        btn.style.border = "1px solid white";
+        btn.style.borderRadius = "5px";
+        btn.addEventListener("click", () => {
+            const greenworks = require("./greenworks");
+            if (greenworks && greenworks.activateAchievement) {
+                greenworks.activateAchievement("TEST_ACHIEVEMENT",
+                    () => console.log("Test achievement unlocked successfully."),
+                    () => console.error("Failed to unlock test achievement.")
+                );
+            }
+        });
+        document.body.appendChild(btn);
+
+        nwcompat.debugSpeed = false;
+        const speedBtn = document.createElement("button");
+        speedBtn.textContent = "Speed: Normal";
+        speedBtn.style.position = "absolute";
+        speedBtn.style.top = "50px";
+        speedBtn.style.right = "10px";
+        speedBtn.style.zIndex = "999999";
+        speedBtn.style.padding = "10px";
+        speedBtn.style.backgroundColor = "rgba(0,0,0,0.7)";
+        speedBtn.style.color = "white";
+        speedBtn.style.border = "1px solid white";
+        speedBtn.style.borderRadius = "5px";
+        speedBtn.addEventListener("click", () => {
+            nwcompat.debugSpeed = !nwcompat.debugSpeed;
+            speedBtn.textContent = nwcompat.debugSpeed ? "Speed: FAST" : "Speed: Normal";
+            speedBtn.style.color = nwcompat.debugSpeed ? "yellow" : "white";
+        });
+        document.body.appendChild(speedBtn);
+    });
+}

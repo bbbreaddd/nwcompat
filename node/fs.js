@@ -46,7 +46,7 @@ const fs = {
         if (typeof data === "number") data = String(data);
         if (typeof data === "string") data = encoder.encode(data);
 
-        nwcompat.fsWriteFile(path, data);
+        nwcompat.fsWriteFile(path, Buffer.from(data).toString("base64"));
     },
 
     readdir(path, callback) {
@@ -124,8 +124,8 @@ const fs = {
     },
 
     // Stubs
-    openSync() {},
-    writeSync() {},
+    openSync() { },
+    writeSync() { },
 };
 
 module.exports = fs;

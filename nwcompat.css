@@ -7,7 +7,7 @@
     overflow-y: hidden;
 }
 
-.nwcomapt-achievement {
+.nwcompat-achievement {
     width: 283px;
     height: 70px;
     animation: 5s linear 0s 1 slideInFromBottom;
@@ -21,7 +21,7 @@
     justify-content: center;
 }
 
-.nwcompat-achievement-text > div {
+.nwcompat-achievement-text>div {
     font-size: 12px;
     font-family: Helvetica;
 }

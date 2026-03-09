@@ -18,6 +18,18 @@ module.exports = {
     getAchievement(name, callback) {
         callback(!!nwcompat.savedData.achievements[name]);
     },
+    isSteamRunning() {
+        return true;
+    },
+    getSteamId() {
+        return { screenName: "Mobile Player" };
+    },
+    getCurrentUILanguage() {
+        return "english";
+    },
+    getCurrentGameLanguage() {
+        return "english";
+    },
     activateAchievement(id, successCallback, errorCallback) {
         const info = achievements[nwcompat.game][id];
         if (!info) {
