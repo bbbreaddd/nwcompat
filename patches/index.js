@@ -8,7 +8,6 @@ require("./instarsandtime/loader");
 
 require("./omori/loader");
 require("./omori/pixi");
-require("./omori/misc");
 require("./omori/plugins_undo");
 require("./omori/performance");
 require("./omori/oneloader");
