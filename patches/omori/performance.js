@@ -18,9 +18,11 @@ nwcompat.patches.push({
 
             // GTP_OmoriFixes
             // create a ticker without maxFPS
-            this.ticker = new PIXI.Ticker();
-            this.ticker.add(this.update, this);
-            this.ticker.start();
+            if (!this.ticker) {
+                this.ticker = new PIXI.Ticker();
+                this.ticker.add(this.update, this);
+                this.ticker.start();
+            }
 
             const win = window.nw.Window.get();
 
@@ -64,7 +66,7 @@ nwcompat.patches.push({
             Scene_OmoriQuest.prototype.createBackground =
             Scene_OmoriItemShop.prototype.createBackground =
             Sprite_MapCharacterTag.prototype.createBackground =
-                Scene_MenuBase.prototype.createBackground;
+            Scene_MenuBase.prototype.createBackground;
 
         Sprite_MapCharacterTag.prototype.show = function () {
             this._index = 0;

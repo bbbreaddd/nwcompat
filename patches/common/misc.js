@@ -260,9 +260,7 @@ nwcompat.patches.push({
 
         const oSceneManager_update = SceneManager.update;
         SceneManager.update = function () {
-            if (Graphics._fpsMeter) Graphics._fpsMeter.startTick();
             oSceneManager_update.call(this);
-            if (Graphics._fpsMeter) Graphics._fpsMeter.endTick();
         };
 
         const oSceneManager_onKeyDown = SceneManager.onKeyDown;
