@@ -39,6 +39,12 @@ nwcompat.patches.push({
         });
         gamepadRoot.appendChild(toggleBtn);
 
+        const sizeLabel = document.createElement("div");
+        sizeLabel.textContent = "Button Size";
+        sizeLabel.style.color = "white";
+        sizeLabel.style.fontSize = "14px";
+        gamepadEditor.appendChild(sizeLabel);
+
         const sizeSlider = document.createElement("input");
         sizeSlider.type = "range";
         sizeSlider.min = "32";
@@ -60,13 +66,88 @@ nwcompat.patches.push({
 
             for (const draggable of Draggable.draggables) {
                 nwcompat.savedData.gamepad.buttons[draggable.el.id] = {
-                    inset: draggable.options.inset,
+                    inset: { ...draggable.options.inset },
                 };
             }
             nwcompat.saveData();
         });
-
         gamepadEditor.appendChild(saveButton);
+
+        const resetButton = document.createElement("button");
+        resetButton.textContent = "Reset Controls";
+        resetButton.style.marginTop = "8px";
+
+        // Custom Modal UI
+        const modalOverlay = document.createElement("div");
+        modalOverlay.className = "nwcompat-modal-overlay";
+        document.body.appendChild(modalOverlay);
+
+        const modal = document.createElement("div");
+        modal.className = "nwcompat-modal";
+        modalOverlay.appendChild(modal);
+
+        const modalTitle = document.createElement("div");
+        modalTitle.className = "nwcompat-modal-title";
+        modalTitle.textContent = "Reset Controls";
+        modal.appendChild(modalTitle);
+
+        const modalText = document.createElement("div");
+        modalText.className = "nwcompat-modal-text";
+        modalText.textContent = "Are you sure you want to reset all controls to their default positions and size?";
+        modal.appendChild(modalText);
+
+        const modalButtons = document.createElement("div");
+        modalButtons.className = "nwcompat-modal-buttons";
+        modal.appendChild(modalButtons);
+
+        const cancelBtn = document.createElement("button");
+        cancelBtn.className = "nwcompat-modal-btn-cancel";
+        cancelBtn.textContent = "Cancel";
+        modalButtons.appendChild(cancelBtn);
+
+        const confirmBtn = document.createElement("button");
+        confirmBtn.className = "nwcompat-modal-btn-confirm";
+        confirmBtn.textContent = "Reset";
+        modalButtons.appendChild(confirmBtn);
+
+        const showModal = () => modalOverlay.classList.add("active");
+        const hideModal = () => modalOverlay.classList.remove("active");
+
+        cancelBtn.addEventListener("click", hideModal);
+        modalOverlay.addEventListener("click", (e) => {
+            if (e.target === modalOverlay) hideModal();
+        });
+
+        resetButton.addEventListener("click", showModal);
+
+        confirmBtn.addEventListener("click", () => {
+            hideModal();
+
+            const defaults = {
+                "pad-left": { x: 16, y: 64 },
+                "pad-right": { x: 16, y: 64 },
+                "trigger-left": { x: 24, y: 8 },
+                "trigger-right": { x: 24, y: 8 },
+            };
+
+            nwcompat.savedData.gamepad.buttonSize = 56;
+            nwcompat.savedData.gamepad.buttons = {};
+            nwcompat.saveData();
+
+            sizeSlider.value = 56;
+            gamepadRoot.style.setProperty("--nwcompat-gamepad-button-size", "56px");
+
+            const { Draggable } = require("virtual-gamepad");
+            for (const draggable of Draggable.draggables) {
+                const id = draggable.el.id;
+                if (defaults[id]) {
+                    draggable.options.inset = { ...defaults[id] };
+                    draggable.updateStyle();
+                }
+            }
+        });
+
+        gamepadEditor.appendChild(resetButton);
 
         Input._editControls = function () {
             Draggable.inEditMode = true;

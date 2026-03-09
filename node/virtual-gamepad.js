@@ -100,7 +100,7 @@ class Draggable {
         Draggable.draggables.push(this);
     }
 
-    #updateStyle() {
+    updateStyle() {
         const { x, y } = this.options.anchor;
         this.el.style[x] = `${this.options.inset.x}px`;
         this.el.style[y] = `${this.options.inset.y}px`;
@@ -127,7 +127,7 @@ class Draggable {
         this.options.inset.x += deltaX;
         this.options.inset.y += deltaY;
 
-        this.#updateStyle();
+        this.updateStyle();
     }
 
     _onPointerEnd(e) {
@@ -139,7 +139,7 @@ class Draggable {
         this.options.inset.x = Math.round(this.options.inset.x);
         this.options.inset.y = Math.round(this.options.inset.y);
 
-        this.#updateStyle();
+        this.updateStyle();
     }
 }
 
