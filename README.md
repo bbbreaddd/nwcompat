@@ -6,7 +6,7 @@ ISAT patches for Android
 
 Based on [chromori](https://github.com/fifomori/chromori)
 
-## If you're looking for .apk, see [this](https://github.com/bbbreaddd/isat-androidd)
+## If you're looking for .apk, see [this](https://github.com/bbbreaddd/isat-android)
 
 # Building (Powershell)
 
