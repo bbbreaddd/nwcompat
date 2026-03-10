@@ -149,6 +149,7 @@ nwcompat.patches.push({
 
             constructor() {
                 this.dom = document.createElement("div");
+                this.dom.id = "nwcompat-stats";
                 this.dom.style.cssText = "position: fixed; top: 16px; left: 32px; opacity: 0.9; z-index: 100;";
 
                 this.beginTime = performance.now();
@@ -172,6 +173,7 @@ nwcompat.patches.push({
                     this.dom.children[i].style.display = i === mode ? "block" : "none";
                 }
 
+                this.dom.style.display = mode === -1 ? "none" : "block";
                 this.mode = mode;
             }
 
@@ -315,9 +317,21 @@ nwcompat.patches.push({
                 return; // Already ours
             }
 
-            // Try to remove old meter DOM if it exists
-            if (Graphics._fpsMeter && Graphics._fpsMeter.dom && Graphics._fpsMeter.dom.parentNode) {
-                Graphics._fpsMeter.dom.parentNode.removeChild(Graphics._fpsMeter.dom);
+            // Clean up any existing ones in the body by searching for our id or standard IDs
+            ["nwcompat-stats", "modeBox", "fpsmeter", "fpsMeter"].forEach(id => {
+                const el = document.getElementById(id);
+                if (el && el.parentNode) {
+                    el.parentNode.removeChild(el);
+                }
+            });
+
+            // Try to remove old meter DOM if it exists through Graphics properties
+            if (Graphics._fpsMeter) {
+                const old = Graphics._fpsMeter;
+                const el = old.dom || old.canvas || (old._canvas && old._canvas.parentElement) || (old.container) || (old._stats && old._stats.dom);
+                if (el && el.parentNode && el.id !== "nwcompat-stats") {
+                    el.parentNode.removeChild(el);
+                }
             }
 
             Graphics._fpsMeter = new Omori_FPSCounter();
@@ -337,7 +351,11 @@ nwcompat.patches.push({
 
         const oGraphics_createModeBox = Graphics._createModeBox;
         Graphics._createModeBox = function () {
-            if (oGraphics_createModeBox) oGraphics_createModeBox.call(this, ...arguments);
+            // if (oGraphics_createModeBox) oGraphics_createModeBox.call(this, ...arguments);
+            forceInitializeFPSCounter();
+        };
+
+        Graphics._createFPSMeter = function () {
             forceInitializeFPSCounter();
         };
     },
