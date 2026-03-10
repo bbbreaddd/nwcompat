@@ -171,8 +171,12 @@ nwcompat.patches.push({
             };
         });
 
+        TouchInput._touchInputEnabled = nwcompat.savedData.gamepad.touchEnabled;
+
         TouchInput._toggleTouchInput = function () {
             this._touchInputEnabled = !this._touchInputEnabled;
+            nwcompat.savedData.gamepad.touchEnabled = this._touchInputEnabled;
+            nwcompat.saveData();
         };
 
         const makeWrapper = (id) => {

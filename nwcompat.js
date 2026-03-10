@@ -65,6 +65,7 @@ nwcompat.loadData = function () {
     nwcompat.savedData.gamepad = file.gamepad || {};
     nwcompat.savedData.gamepad.buttons ||= {};
     nwcompat.savedData.gamepad.visible = file.gamepad?.visible ?? true;
+    nwcompat.savedData.gamepad.touchEnabled = file.gamepad?.touchEnabled ?? true;
     nwcompat.savedData.fps = file.fps || { visible: false, mode: 0 };
 
     this.preCacheAchievements();
