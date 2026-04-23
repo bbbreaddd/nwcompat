@@ -275,6 +275,7 @@ if (nwcompat.nativeInfo.isDebug) {
         btn.style.color = "white";
         btn.style.border = "1px solid white";
         btn.style.borderRadius = "5px";
+        btn.tabIndex = -1;
         updateBtnText();
         
         btn.addEventListener("click", () => {
@@ -304,6 +305,7 @@ if (nwcompat.nativeInfo.isDebug) {
         speedBtn.style.position = "absolute";
         speedBtn.style.top = "50px";
         speedBtn.style.right = "10px";
+        speedBtn.tabIndex = -1;
         speedBtn.style.zIndex = "999999";
         speedBtn.style.padding = "10px";
         speedBtn.style.backgroundColor = "rgba(0,0,0,0.7)";

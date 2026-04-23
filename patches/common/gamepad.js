@@ -6,10 +6,41 @@ nwcompat.patches.push({
         const { layouts, VirtualGamepad, Draggable, Pad, Button } = require("virtual-gamepad");
         const targetLayout = layouts.xbox;
 
-        new VirtualGamepad(0, targetLayout.id);
+        // Use a high index initially to avoid clashing with physical controller at index 0
+        new VirtualGamepad(4, targetLayout.id);
 
+        const oGetGamepads = navigator.getGamepads.bind(navigator);
         navigator.getGamepads = function () {
-            return VirtualGamepad.instance.interacted ? [VirtualGamepad.instance] : [];
+            const gamepads = oGetGamepads();
+            // Ensure we have a proper array to work with
+            const result = gamepads ? Array.from(gamepads) : [null, null, null, null];
+            
+            if (VirtualGamepad.instance.interacted) {
+                // Check if virtual gamepad is already in the list
+                let existingIndex = result.indexOf(VirtualGamepad.instance);
+                
+                if (existingIndex === -1) {
+                    // Find the FIRST NULL slot to insert the virtual gamepad
+                    // This ensures it doesn't overwrite a physical controller at index 0
+                    let inserted = false;
+                    for (let i = 0; i < result.length; i++) {
+                        if (result[i] === null) {
+                            result[i] = VirtualGamepad.instance;
+                            VirtualGamepad.instance.index = i; // Sync internal index with slot
+                            inserted = true;
+                            break;
+                        }
+                    }
+                    if (!inserted) {
+                        VirtualGamepad.instance.index = result.length;
+                        result.push(VirtualGamepad.instance);
+                    }
+                } else {
+                    // Ensure the internal index property stays in sync with its position
+                    VirtualGamepad.instance.index = existingIndex;
+                }
+            }
+            return result;
         };
 
         const gamepadRoot = document.querySelector(".nwcompat-gamepad");
@@ -26,6 +57,7 @@ nwcompat.patches.push({
 
         const toggleBtn = document.createElement("button");
         toggleBtn.className = "nwcompat-gamepad-toggle";
+        toggleBtn.tabIndex = -1;
         toggleBtn.innerHTML = `
             <svg viewBox="0 0 24 24">
                 <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
