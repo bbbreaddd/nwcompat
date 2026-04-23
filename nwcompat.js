@@ -227,7 +227,11 @@ globalThis.process = {
 if (nwcompat.nativeInfo.isDebug) {
     window.addEventListener("load", () => {
         const btn = document.createElement("button");
-        btn.textContent = "Unlock Test Achievement";
+        const updateBtnText = () => {
+            const unlocked = nwcompat.savedData?.achievements?.["TEST_ACHIEVEMENT"];
+            btn.textContent = unlocked ? "Lock Test Achievement" : "Unlock Test Achievement";
+        };
+        
         btn.style.position = "absolute";
         btn.style.top = "10px";
         btn.style.right = "10px";
@@ -237,13 +241,25 @@ if (nwcompat.nativeInfo.isDebug) {
         btn.style.color = "white";
         btn.style.border = "1px solid white";
         btn.style.borderRadius = "5px";
+        updateBtnText();
+        
         btn.addEventListener("click", () => {
-            const greenworks = require("./greenworks");
-            if (greenworks && greenworks.activateAchievement) {
-                greenworks.activateAchievement("TEST_ACHIEVEMENT",
-                    () => console.log("Test achievement unlocked successfully."),
-                    () => console.error("Failed to unlock test achievement.")
-                );
+            if (nwcompat.savedData?.achievements?.["TEST_ACHIEVEMENT"]) {
+                delete nwcompat.savedData.achievements["TEST_ACHIEVEMENT"];
+                nwcompat.saveData();
+                console.log("Test achievement locked successfully.");
+                updateBtnText();
+            } else {
+                const greenworks = require("./greenworks");
+                if (greenworks && greenworks.activateAchievement) {
+                    greenworks.activateAchievement("TEST_ACHIEVEMENT",
+                        () => {
+                            console.log("Test achievement unlocked successfully.");
+                            updateBtnText();
+                        },
+                        () => console.error("Failed to unlock test achievement.")
+                    );
+                }
             }
         });
         document.body.appendChild(btn);

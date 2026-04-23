@@ -433,9 +433,9 @@ module.exports = {
             img: "https://cdn.cloudflare.steamstatic.com/steamcommunity/public/images/apps/1677310/12d402195bffd6e5c98a7d95865544734889261a.jpg",
         },
         TEST_ACHIEVEMENT: {
-            name: "Long Description Test",
-            description: "This is a really, really, really, really, really, really, really, really, really, really, really, really, really, really, really, really, really, really, really, really, really, really, really, really, really, really, really, really, really, really, really, really, really, really, really, really, really, really, really, really, really, really, really, really, really, really, really, really, really, really, really, really, really, really, really, really, really, really, really, really, really, really long description to see if it overflows the achievement UI container.",
-            img: "https://steamdb.info/static/img/appicon.svg",
+            name: "Test Achievement",
+            description: "Test Achievement Description",
+            img: "https://cdn.cloudflare.steamstatic.com/steamcommunity/public/images/apps/1677310/091ca7ed17abd138e32469142ab16d83aa3976b3.jpg",
         },
         act2: {
             name: "Break a leg!",
