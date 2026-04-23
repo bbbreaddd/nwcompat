@@ -1,8 +1,7 @@
-const achievements = require("./achievements");
-
 module.exports = {
     initAPI() {
-        if (!(nwcompat.game in achievements)) {
+        const db = nwcompat.getDbAchievements();
+        if (!db) {
             console.error(`greenworks.initAPI: no achievements found for game '${nwcompat.game}'`);
             return false;
         }
@@ -10,10 +9,10 @@ module.exports = {
         return true;
     },
     getNumberOfAchievements() {
-        return Object.keys(achievements[nwcompat.game]).length;
+        return Object.keys(nwcompat.getDbAchievements() || {}).length;
     },
     getAchievementNames() {
-        return Object.keys(achievements[nwcompat.game]);
+        return Object.keys(nwcompat.getDbAchievements() || {});
     },
     getAchievement(name, callback) {
         callback(!!nwcompat.savedData.achievements[name]);
@@ -31,10 +30,12 @@ module.exports = {
         return "english";
     },
     activateAchievement(id, successCallback, errorCallback) {
-        const info = achievements[nwcompat.game][id];
+        const db = nwcompat.getDbAchievements();
+        const info = db ? db[id] : null;
         if (!info) {
             console.error(`greenworks.activateAchievement: '${id}' not found`);
-            return errorCallback();
+            if (errorCallback) errorCallback();
+            return;
         }
 
         if (nwcompat.savedData.achievements[id] === true) {

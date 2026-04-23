@@ -120,14 +120,48 @@ nwcompat.getAchievementIcon = async function (url) {
     }
 };
 
+nwcompat.getDbAchievements = function () {
+    if (this._dbAchievements) return this._dbAchievements;
+    try {
+        const dbId = (this.game === "omori") ? "1150690" : "1677310";
+        const fs = require("fs");
+        let jsonStr;
+        
+        try {
+            jsonStr = fs.readFileSync(`${dbId}.db.txt`, "utf8");
+        } catch(e) {
+            // fallback if fs hasn't resolved to the game directory or file is missing
+            const b64 = nwcompat.fsReadFile(`${dbId}.db.txt`);
+            if (b64) jsonStr = decodeURIComponent(escape(window.atob(b64)));
+        }
+
+        if (!jsonStr) return null;
+        
+        const json = JSON.parse(jsonStr);
+        const out = {};
+        for (const ach of json.achievement.list) {
+            out[ach.name] = {
+                name: ach.displayName,
+                description: ach.description,
+                img: ach.icon || ach.icongray,
+                id: ach.name
+            };
+        }
+        this._dbAchievements = out;
+        return out;
+    } catch (e) {
+        console.warn("[nwcompat] Failed to load db.txt achievements:", e);
+        return null;
+    }
+};
+
 nwcompat.preCacheAchievements = function () {
     try {
         const fs = require("fs");
         const pp = require("path");
         const iconsPath = pp.join(nwcompat.nativeInfo.dataDirectory, "icons");
 
-        const achievementsModule = require("./node/achievements.js");
-        const achievementsData = achievementsModule[nwcompat.game];
+        const achievementsData = this.getDbAchievements();
 
         if (achievementsData) {
             if (!fs.existsSync(iconsPath)) fs.mkdirSync(iconsPath);
