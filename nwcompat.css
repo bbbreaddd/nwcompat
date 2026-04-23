@@ -354,3 +354,22 @@ body {
 div[data-pixi-devtools="clip"] {
     z-index: 10000;
 }
+
+.nwcompat-border {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-image: url('borders.png');
+    background-size: auto 100%;
+    background-position: center;
+    background-repeat: no-repeat;
+    pointer-events: none;
+    z-index: 100;
+    display: none;
+}
+
+.nwcompat-border.active {
+    display: block;
+}

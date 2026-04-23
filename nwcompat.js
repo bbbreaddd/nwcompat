@@ -318,3 +318,12 @@ if (nwcompat.nativeInfo.isDebug) {
         document.body.appendChild(speedBtn);
     });
 }
+
+// In Stars And Time Border
+if (nwcompat.game === "instarsandtime") {
+    window.addEventListener("load", () => {
+        const border = document.createElement("div");
+        border.className = "nwcompat-border active";
+        document.body.appendChild(border);
+    });
+}

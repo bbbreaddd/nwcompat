@@ -18,6 +18,7 @@ if defined NWCOMPAT_DST (
     xcopy /y "index-oneloader.html" "%NWCOMPAT_DST%\app\src\main\assets\"
     xcopy /y "nwcompat-loader-oneloader.js" "%NWCOMPAT_DST%\app\src\main\assets\"
     xcopy /y "nwcompat-loader-main.js" "%NWCOMPAT_DST%\app\src\main\assets\js\main.js"
+    xcopy /y "patches\instarsandtime\borders.png" "%NWCOMPAT_DST%\app\src\main\assets\"
     xcopy /y /s "dist\*" "%NWCOMPAT_DST%\app\src\main\assets\"
     if defined NWCOMPAT_DST_ADB (
         adb push "%NWCOMPAT_DST%\app\src\main\assets" "%NWCOMPAT_DST_ADB%"
