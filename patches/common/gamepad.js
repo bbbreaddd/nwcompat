@@ -64,7 +64,10 @@ nwcompat.patches.push({
                 <circle cx="12" cy="12" r="3"></circle>
             </svg>
         `;
-        toggleBtn.addEventListener("click", () => {
+        
+        // Use pointerdown to ensure it triggers before the game engine can intercept it
+        toggleBtn.addEventListener("pointerdown", (e) => {
+            e.stopPropagation(); // Stop the game engine from seeing this touch
             const isHidden = gamepadRoot.classList.toggle("hidden");
             nwcompat.savedData.gamepad.visible = !isHidden;
             nwcompat.saveData();
