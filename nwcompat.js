@@ -321,9 +321,24 @@ if (nwcompat.nativeInfo.isDebug) {
 
 // In Stars And Time Border
 if (nwcompat.game === "instarsandtime") {
+    nwcompat._bordersEnabled = nwcompat.nativeInfo.settings?.borders ?? true;
+
+    nwcompat._toggleBorders = function () {
+        this._bordersEnabled = !this._bordersEnabled;
+        const border = document.querySelector(".nwcompat-border");
+        if (border) {
+            if (this._bordersEnabled) border.classList.add("active");
+            else border.classList.remove("active");
+        }
+        if (this.setPreference) {
+            this.setPreference("borders", this._bordersEnabled);
+        }
+    };
+
     window.addEventListener("load", () => {
         const border = document.createElement("div");
-        border.className = "nwcompat-border active";
+        border.className = "nwcompat-border";
+        if (nwcompat._bordersEnabled) border.classList.add("active");
         document.body.appendChild(border);
     });
 }
