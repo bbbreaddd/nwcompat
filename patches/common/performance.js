@@ -175,8 +175,8 @@ nwcompat.patches.push({
             // corner
             children[0].setFrame(sx, sy, m, m);
             children[1].setFrame(sx + sw - m, sy, m, m);
-            children[2].setFrame(sx, sy + sw - m, m, m);
-            children[3].setFrame(sx + sw - m, sy + sw - m, m, m);
+            children[2].setFrame(sx, sy + sh - m, m, m);
+            children[3].setFrame(sx + sw - m, sy + sh - m, m, m);
             children[0].move(0, 0);
             children[1].move(dw - m, 0);
             children[2].move(0, dh - m);
@@ -187,7 +187,7 @@ nwcompat.patches.push({
             children[6].move(0, m);
             children[7].move(dw - m, m);
             children[4].setFrame(sx + m, sy, smw, m);
-            children[5].setFrame(sx + m, sy + sw - m, smw, m);
+            children[5].setFrame(sx + m, sy + sh - m, smw, m);
             children[6].setFrame(sx, sy + m, m, smh);
             children[7].setFrame(sx + sw - m, sy + m, m, smh);
             children[4].scale.x = dmw / smw;

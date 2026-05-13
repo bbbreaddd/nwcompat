@@ -102,8 +102,9 @@ nwcompat.getAchievementIcon = async function (url) {
         }
 
         const response = await fetch(url);
+        if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
         const blob = await response.blob();
-        return new Promise((resolve) => {
+        return new Promise((resolve, reject) => {
             const reader = new FileReader();
             reader.onloadend = () => {
                 const base64data = reader.result;
@@ -112,6 +113,7 @@ nwcompat.getAchievementIcon = async function (url) {
                 fs.writeFileSync(localPath, base64Content, "base64");
                 resolve(base64data);
             };
+            reader.onerror = () => reject(reader.error);
             reader.readAsDataURL(blob);
         });
     } catch (e) {
@@ -221,18 +223,19 @@ globalThis.require = (id) => {
     if (module) {
         return module;
     } else {
+        if (id === "fs" || id === "path") {
+            console.error(`[nwcompat:require] core module '${id}' not in cache`);
+            return undefined;
+        }
         const fs = require("fs");
         const pp = require("path");
 
         try {
             const file = fs.readFileSync(pp.join(process.cwd(), id), "utf8");
 
-            function evalInScope(js, contextAsScope) {
-                return function () {
-                    with (this) {
-                        return eval(js);
-                    }
-                }.call(contextAsScope);
+            function evalInScope(js, context) {
+                const fn = new Function("exports", "require", "module", "__filename", "__dirname", js);
+                fn.call(context.module.exports, context.module.exports, globalThis.require, context.module, pp.join(process.cwd(), id), process.cwd());
             }
 
             const context = { module: { exports: {} } };
@@ -321,7 +324,9 @@ if (nwcompat.nativeInfo.isDebug) {
     });
 }
 
+
 // In Stars And Time Border
+
 if (nwcompat.game === "instarsandtime") {
     nwcompat._bordersEnabled = nwcompat.nativeInfo.settings?.borders ?? true;
 

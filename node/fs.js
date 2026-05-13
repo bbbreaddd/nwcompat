@@ -15,12 +15,14 @@ const fs = {
             .then((data) => callback(null, data))
             .catch((e) => {
                 // HACK: GTP_OmoriFixes Permanent_Manager.load throws it and it works in node because it is in another ~~thread~~/idk i forgor
-                if (path.includes("CUTSCENE.json")) callback();
-                else callback(e);
+                if (path.includes("CUTSCENE.json")) {
+                    console.warn("[nwcompat:fs] Suppressed readFile error for CUTSCENE.json:", e);
+                    callback();
+                } else callback(e);
             });
     },
 
-    readFileSync(path, options = "ascii") {
+    readFileSync(path, options) {
         const data = nwcompat.fsReadFile(path);
 
         if (data == null) {
@@ -28,17 +30,25 @@ const fs = {
         }
 
         const buffer = Buffer.from(data, "base64");
-        const encoding = typeof options === "string" ? options : options.encoding;
-        if (encoding === "utf8" || encoding === "utf-8") return decoder.decode(buffer);
+        const encoding = typeof options === "string" ? options : options?.encoding;
+
+        if (!encoding) return buffer;
+        if (encoding === "utf8" || encoding === "utf-8" || encoding === "ascii") return decoder.decode(buffer);
         return buffer;
     },
 
     writeFile(path, data, callback) {
-        fs.writeFileSync(path, data);
-        if (callback) {
-            new Promise((resolve, reject) => {
-                resolve();
-            }).then(() => callback());
+        try {
+            fs.writeFileSync(path, data);
+            if (callback) {
+                Promise.resolve().then(() => callback(null));
+            }
+        } catch (e) {
+            if (callback) {
+                Promise.resolve().then(() => callback(e));
+            } else {
+                throw e;
+            }
         }
     },
 
@@ -65,21 +75,25 @@ const fs = {
     readdir(path, callback) {
         if (!callback) return;
 
-        new Promise((resolve, reject) => {
-            resolve(fs.readdirSync(path));
-        }).then((data) => callback(null, data));
+        Promise.resolve()
+            .then(() => fs.readdirSync(path))
+            .then((data) => callback(null, data))
+            .catch((e) => callback(e));
     },
 
     readdirSync(path) {
-        return nwcompat.fsReadDir(path).split(":").sort();
+        const result = nwcompat.fsReadDir(path);
+        if (!result) return [];
+        return result.split("\n").filter(Boolean).sort();
     },
 
     mkdir(path, callback) {
         if (!callback) return;
 
-        new Promise((resolve, reject) => {
-            resolve(fs.mkdirSync(path));
-        }).then((data) => callback(null, data));
+        Promise.resolve()
+            .then(() => fs.mkdirSync(path))
+            .then((data) => callback(null, data))
+            .catch((e) => callback(e));
     },
 
     mkdirSync(path) {
@@ -126,10 +140,12 @@ const fs = {
     },
 
     rename(oldPath, newPath, callback) {
-        if (callback)
-            new Promise((resolve, reject) => {
-                resolve(fs.renameSync(oldPath, newPath));
-            }).then((data) => callback(null, data));
+        if (callback) {
+            Promise.resolve()
+                .then(() => fs.renameSync(oldPath, newPath))
+                .then((data) => callback(null, data))
+                .catch((e) => callback(e));
+        }
     },
 
     renameSync(oldPath, newPath) {

@@ -137,7 +137,7 @@ nwcompat.patches.push({
         // GTP_OmoriFixes
         DataManager.loadDataFile = function (name, src) {
             if (!!Utils.isOptionValid("test")) {
-                return oDataManager.loadMapData.call(this, ...arguments);
+                return oDataManager.loadDataFile.call(this, ...arguments);
             }
 
             if (this._cacheData[name]) {
